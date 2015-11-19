@@ -31,7 +31,9 @@
         <div class="row">
             <display:table name="users" id="user" class="table tablesorter">
                 <display:column title="Name" property="name" />
-                <display:column title="Email" property="email" />
+                <display:column title="Email">
+                    <a href="mailto:${user.email}">${user.email}</a>
+                </display:column>
                 <display:column title="Last changed" property="lastChangedDate" />
                 <display:column title="Actions">
                     <a class="btn btn-info" href="${pageContext.request.contextPath}/app/users/${user.id}/changePassword">Change password</a>

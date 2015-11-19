@@ -36,7 +36,7 @@
                     <li class="dropdown">
                         <c:choose>
                             <c:when test="${sessionScope.isAuthenticated}">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                                <a href="#" id="username" class="dropdown-toggle" data-toggle="dropdown"
                                    role="button" aria-haspopup="true" aria-expanded="false">${sessionScope.User}<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="#">Settings</a></li>
