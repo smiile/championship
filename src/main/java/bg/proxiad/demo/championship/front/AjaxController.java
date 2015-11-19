@@ -8,13 +8,14 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -90,97 +91,5 @@ public class AjaxController {
 
         return statusResponse;
     }
-
-    @RequestMapping(value = "/test")
-    public @ResponseBody
-    String selenium2Example() {
-        StringBuilder response = new StringBuilder();
-
-        WebDriver driver = new ChromeDriver();
-        driver.get("http://www.google.com");
-
-        WebElement element = driver.findElement(By.name("q"));
-        element.sendKeys("Cheese!");
-        element.submit();
-
-        response.append("Page title is: " + driver.getTitle());
-
-        (new WebDriverWait(driver, 10)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().toLowerCase().startsWith("cheese!");
-            }
-        });
-
-        response.append("Page title is: " + driver.getTitle());
-
-        driver.quit();
-
-        return response.toString();
-    }
-
-    @RequestMapping(value = "/isGuest")
-    public @ResponseBody
-    String checkIfGuestOnLogin(HttpServletRequest request) {
-        StringBuilder response = new StringBuilder();
-        
-        // In this case "localhost:8080/championship" !NB url scheme is missing
-        String baseURL = request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
-        
-        WebDriver driver = new ChromeDriver();
-        driver.get(baseURL);
-
-        WebElement element = driver.findElement(By.id("username"));
-
-        if ("Guest".equals(element.getText())) {
-            response.append("WORKS");
-        } else {
-            response.append("FAILS");
-        }
-
-        driver.quit();
-
-        return response.toString();
-    }
-
-    @RequestMapping(value = "/isIntruderBlocked")
-    public @ResponseBody
-    String checkIfAuthFiltersWork(HttpServletRequest request) {
-        StringBuilder response = new StringBuilder();
-        
-        // In this case "localhost:8080/championship" !NB url scheme is missing
-        String baseURL = request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
-
-        WebDriver driver = new ChromeDriver();
-        driver.get(baseURL + "/app/groups");
-        
-        Boolean isFound = driver.findElements(By.className("form-signin")).size() > 0;
-        
-        if (isFound) {
-            response.append("WORKS");
-        } else {
-            response.append("FAILS");
-        }
-
-        driver.quit();
-
-        return response.toString();
-    }
-    
-    @RequestMapping(value = "/isUserCreated")
-    public @ResponseBody String checkIfUserIsShownInListAfterCreation(HttpServletRequest request) {
-        StringBuilder response = new StringBuilder();
-        
-        // In this case "localhost:8080/championship" !NB url scheme is missing
-        String baseURL = request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
-        
-        WebDriver driver = new FirefoxDriver();
-        
-        driver.get(baseURL + "/app/users/create");
-        
-        
-        
-        return response.toString();
-    }
-    
     
 }
