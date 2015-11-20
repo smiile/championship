@@ -1,5 +1,6 @@
 package bg.proxiad.demo.championship.front;
 
+import java.util.Objects;
 import java.util.Random;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -9,6 +10,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ChangePasswordIT {
 
@@ -68,11 +71,18 @@ public class ChangePasswordIT {
         assertEquals("different new passwords", 1, driver.findElements(By.id("repeatPassword.errors")).size());
         
         // Success scenario
+        driver.findElement(By.id("oldPasswordInput")).clear();
+        driver.findElement(By.id("newPasswordInput")).clear();
+        driver.findElement(By.id("repeatPasswordInput")).clear();
         driver.findElement(By.id("oldPasswordInput")).sendKeys(password);
         driver.findElement(By.id("newPasswordInput")).sendKeys("newpassword");
         driver.findElement(By.id("repeatPasswordInput")).sendKeys("newpassword");
         driver.findElement(By.id("userForm")).submit();
-        assertTrue(driver.findElements(By.className("alert-success")).size() > 0);
+        
+        WebElement myDynamicElement = (new WebDriverWait(driver, 2))
+            .until(ExpectedConditions.presenceOfElementLocated(By.className("alert-success")));
+        
+        assertTrue(!Objects.equals(myDynamicElement, null));
         
         // Delete temp user
         WebElement deleteBtn = (WebElement) ((JavascriptExecutor)driver).executeScript("return $('tr:last td:last a:last')[0]");
