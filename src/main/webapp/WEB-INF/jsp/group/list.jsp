@@ -13,6 +13,7 @@
         </div>
         <div class="row" style="margin-bottom: 20px;">
             <span style="font-size: 24px;">Groups</span>
+            <a href="" id="generateMatchesBtn" class="btn btn-success pull-right" style="margin-left: 20px;"><span class="glyphicon glyphicon-flag"></span>Generate matches</a>
             <a href="${pageContext.request.contextPath}/app/groups/rearrange" class="btn btn-primary pull-right" style="margin-left: 20px;"><span class="glyphicon glyphicon-menu-hamburger"></span>Rearrange players</a> 
             <a href="${pageContext.request.contextPath}/app/groups/create" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-plus-sign"></span>Create group</a> 
         </div>
@@ -41,6 +42,23 @@
                     }
                 }
             });
+            
+            $("#generateMatchesBtn").click(function (event) {
+                event.preventDefault();
+                
+                $.ajax({
+                   url: "${pageContext.request.contextPath}/app/ajax/checkGroupMatchesConditions",
+                   success: function (response) {
+                       if(response.status != "OK") {
+                           swal("Good job!", "All conditions are satisfied. The match generation can continue", "success");
+                       } else {
+                           swal("One more thing...", "You need 8 groups with at least 2 participants each.", "warning");
+                       }
+                       
+                   }
+                });
+            });
+            
             $(".deleteBtn").click(function (event) {
                 event.preventDefault();
                 var deletionUrl = $(this).attr("href");

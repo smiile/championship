@@ -4,24 +4,16 @@ import bg.proxiad.demo.championship.logic.GroupingService;
 import bg.proxiad.demo.championship.logic.ParticipantService;
 import bg.proxiad.demo.championship.jsonbeans.GroupReceiver;
 import bg.proxiad.demo.championship.jsonbeans.StatusResponse;
+import bg.proxiad.demo.championship.model.Grouping;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -92,4 +84,25 @@ public class AjaxController {
         return statusResponse;
     }
     
+    @RequestMapping(value = "/checkGroupMatchesConditions")
+    public @ResponseBody StatusResponse checkIfGroupMatchesCanBeGenerated() {
+        StatusResponse statusResponse = new StatusResponse();
+        statusResponse.setStatus("OK");
+        
+        List<Grouping> groups = new ArrayList(groupingService.listAllGroupings());
+        
+        // At least 8 groups a
+        if(groups.size() < 8) {
+            statusResponse.setStatus("FAIL");
+        }
+        
+        for(Grouping group : groups) {
+            if (group.getParticipants().size() < 2) {
+                statusResponse.setStatus("FAIL");
+                break;
+            }
+        }
+        
+        return statusResponse;
+    }
 }
