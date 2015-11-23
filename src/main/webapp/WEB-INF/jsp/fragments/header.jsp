@@ -8,13 +8,13 @@
     <title>Championship</title>
 
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sweetalert.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/tablesorter-blue/style.css" />
     
     <!-- Latest compiled and minified JavaScript -->
     <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
     <script src="${pageContext.request.contextPath}/js/sweetalert.min.js"></script>
 </head>
 <body style="padding-top: 50px">
@@ -29,6 +29,7 @@
                             <li><a href="${pageContext.request.contextPath}/app/users">Users</a></li>
                             <li><a href="${pageContext.request.contextPath}/app/participants">Participants</a></li>
                             <li><a href="${pageContext.request.contextPath}/app/groups">Groups</a></li>
+                            <li><a href="${pageContext.request.contextPath}/app/matches">Matches</a></li>
                         </ul>
                     </li>
                 </ul>
