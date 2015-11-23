@@ -4,6 +4,7 @@ import bg.proxiad.demo.championship.logic.GroupingService;
 import bg.proxiad.demo.championship.logic.ParticipantService;
 import bg.proxiad.demo.championship.jsonbeans.GroupReceiver;
 import bg.proxiad.demo.championship.jsonbeans.StatusResponse;
+import bg.proxiad.demo.championship.logic.MatchService;
 import bg.proxiad.demo.championship.model.Grouping;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -33,6 +34,9 @@ public class AjaxController {
     @Autowired
     GroupingService groupingService;
 
+    @Autowired
+    MatchService matchService;
+    
     @Autowired
     ServletContext context;
 
@@ -91,8 +95,8 @@ public class AjaxController {
         
         List<Grouping> groups = new ArrayList(groupingService.listAllGroupings());
         
-        // At least 8 groups a
-        if(groups.size() < 8) {
+        // No more than 8 groups
+        if(groups.size() > 8) {
             statusResponse.setStatus("FAIL");
         }
         
@@ -102,6 +106,19 @@ public class AjaxController {
                 break;
             }
         }
+        
+        return statusResponse;
+    }
+    
+    @RequestMapping(value = "/generateGroupMatches")
+    public @ResponseBody StatusResponse generateGroupMatches() {
+        StatusResponse statusResponse = new StatusResponse();
+        statusResponse.setStatus("OK");
+        
+        // Remove previously generated group matches
+        matchService.deleteAllGroupMatches();
+        
+        matchService.generateGroupMatches();
         
         return statusResponse;
     }

@@ -42,27 +42,47 @@
                     }
                 }
             });
-            
+
             $("#generateMatchesBtn").click(function (event) {
                 event.preventDefault();
-                
+
                 $.ajax({
-                   url: "${pageContext.request.contextPath}/app/ajax/checkGroupMatchesConditions",
-                   success: function (response) {
-                       if(response.status != "OK") {
-                           swal("Good job!", "All conditions are satisfied. The match generation can continue", "success");
-                       } else {
-                           swal("One more thing...", "You need 8 groups with at least 2 participants each.", "warning");
-                       }
-                       
-                   }
+                    url: "${pageContext.request.contextPath}/app/ajax/checkGroupMatchesConditions",
+                    success: function (response) {
+                        if (response.status === "OK") {
+                            swal({title: "Good job!",
+                                text: "All conditions are satisfied. <br/>The match generation can continue.<br/> <b>WARNING<b>: All previous matches will be <i>deleted</i>!",
+                                type: "success",
+                                showCancelButton: true,
+                                closeOnConfirm: false,
+                                showLoaderOnConfirm: true,
+                                html: true
+                            }, function () {
+                                $.ajax({
+                                    url: "${pageContext.request.contextPath}/app/ajax/generateGroupMatches",
+                                    success: function (response) {
+                                        if (response.status === "OK") {
+                                            swal("Hooray!", "Matches are generated. Go check them out.", "success");
+                                        } else {
+                                            swal("Oops!", "Something went wrong. Call the admin!", "error");
+                                        }
+                                    }, error: function () {
+                                        sweetAlert("Oops...", "Something went wrong!", "error");
+                                    }
+                                });
+                            });
+                        } else {
+                            swal("One more thing...", "You need 8 groups with at least 2 participants each.", "warning");
+                        }
+
+                    }
                 });
             });
-            
+
             $(".deleteBtn").click(function (event) {
                 event.preventDefault();
                 var deletionUrl = $(this).attr("href");
-                
+
                 swal({
                     title: "Are you sure?",
                     text: "It's irreversible.The group's participants \n\
@@ -73,9 +93,9 @@
                     confirmButtonText: "Yes, delete it!",
                     closeOnConfirm: false
                 },
-                function () {
-                    window.location.href = deletionUrl;
-                });
+                        function () {
+                            window.location.href = deletionUrl;
+                        });
             });
         });
     </script>
