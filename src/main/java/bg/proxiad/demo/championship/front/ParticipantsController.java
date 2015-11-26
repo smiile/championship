@@ -21,12 +21,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/participants")
 public class ParticipantsController {
 
+    private final ParticipantService participantService;
+    private final ParticipantFormValidator participantFormValidator;
+    
     @Autowired
-    private ParticipantService participantService;
-
-    @Autowired
-    ParticipantFormValidator participantFormValidator;
-
+    public ParticipantsController(ParticipantService participantService, ParticipantFormValidator participantFormValidator) {
+        this.participantService = participantService;
+        this.participantFormValidator = participantFormValidator;
+    }
+    
     @Autowired
     private ParticipantTransformerHelper participantTransformerHelper;
 
@@ -78,6 +81,8 @@ public class ParticipantsController {
     @RequestMapping(value = "/{id}/read", method = RequestMethod.GET)
     public String showParticipant(@PathVariable("id") Long id, ModelMap model) {
         Participant participant = participantService.loadParticipant(id);
+        
+        ParticipantTransformerHelper participantTransformerHelper = new ParticipantTransformerHelper();
 
         model.addAttribute("participant", participantTransformerHelper.transformParticipantToParticipantViewBean(participant));
         return "participant/read";
@@ -87,6 +92,8 @@ public class ParticipantsController {
     public String updateParticipant(@PathVariable("id") Long id, ModelMap model) {
 
         Participant participant = participantService.loadParticipant(id);
+        
+        ParticipantTransformerHelper participantTransformerHelper = new ParticipantTransformerHelper();
 
         model.addAttribute("participantForm", participantTransformerHelper.transformParticipantToParticipantViewBean(participant));
 

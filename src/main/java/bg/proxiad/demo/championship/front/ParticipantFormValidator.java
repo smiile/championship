@@ -10,11 +10,14 @@ import org.springframework.validation.Validator;
 
 @Component
 public class ParticipantFormValidator implements Validator {
-
-    @Autowired
-    @Qualifier("emailValidator")
+    
     EmailValidator emailValidator;
-
+    
+    @Autowired
+    public ParticipantFormValidator(EmailValidator emailValidator) {
+        this.emailValidator = emailValidator;
+    }
+    
     @Override
     public boolean supports(Class<?> clazz) {
         return ParticipantViewBean.class.equals(clazz);
