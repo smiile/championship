@@ -1,6 +1,7 @@
 package bg.proxiad.demo.championship.model;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface MatchDao {
     
@@ -11,4 +12,6 @@ public interface MatchDao {
     void deleteAllGroupMatches();
     
     Match load(Long id);
+    
+    List<Match> listGroupMatches();
 }

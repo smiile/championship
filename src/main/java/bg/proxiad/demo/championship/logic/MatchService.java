@@ -2,6 +2,7 @@ package bg.proxiad.demo.championship.logic;
 
 import bg.proxiad.demo.championship.model.Match;
 import java.util.Collection;
+import java.util.List;
 
 public interface MatchService {
 
@@ -14,5 +15,7 @@ public interface MatchService {
     public void deleteAllGroupMatches();
     
     public Match loadMatch(Long id);
+    
+    public List<Match> listGroupMatches();
     
 }

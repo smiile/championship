@@ -66,5 +66,10 @@ public class MatchServiceImpl implements MatchService{
     public Match loadMatch(Long id) {
         return matchDao.load(id);
     }
+
+    @Override
+    public List<Match> listGroupMatches() {
+        return matchDao.listGroupMatches();
+    }
     
 }

@@ -1,6 +1,7 @@
 package bg.proxiad.demo.championship.model;
 
 import java.util.Collection;
+import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -19,7 +20,12 @@ public class MatchDaoHibernate implements MatchDao {
                 .createCriteria(Match.class)
                 .list();
     }
-
+    
+    @Override
+    public List<Match> listGroupMatches() {
+        return sessionFactory.getCurrentSession().createQuery("from Match where isGroupMatch is true").list();
+    }
+    
     @Override
     public void saveOrUpdate(Match match) {
         sessionFactory.getCurrentSession().saveOrUpdate(match);
@@ -36,5 +42,5 @@ public class MatchDaoHibernate implements MatchDao {
     public Match load(Long id) {
         return sessionFactory.getCurrentSession().get(Match.class, id);
     }
-
+    
 }
