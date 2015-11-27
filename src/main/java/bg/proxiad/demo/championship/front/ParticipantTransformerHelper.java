@@ -3,14 +3,18 @@ package bg.proxiad.demo.championship.front;
 import bg.proxiad.demo.championship.logic.ParticipantService;
 import bg.proxiad.demo.championship.model.Participant;
 import bg.proxiad.demo.championship.viewbeans.ParticipantViewBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 public class ParticipantTransformerHelper {
-
-    @Autowired
+    // Used only when updating participant
     private ParticipantService participantService;
+    
+    public ParticipantTransformerHelper(ParticipantService participantService) {
+        this.participantService = participantService;
+    }
+    
+    public ParticipantTransformerHelper() {
+        
+    }
     
     public ParticipantViewBean transformParticipantToParticipantViewBean(Participant participant) {
         ParticipantViewBean participantViewBean = new ParticipantViewBean();

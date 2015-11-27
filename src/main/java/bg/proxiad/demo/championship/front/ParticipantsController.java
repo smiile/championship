@@ -30,9 +30,6 @@ public class ParticipantsController {
         this.participantFormValidator = participantFormValidator;
     }
     
-    @Autowired
-    private ParticipantTransformerHelper participantTransformerHelper;
-
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(participantFormValidator);
@@ -62,6 +59,8 @@ public class ParticipantsController {
                 redirectAttributes.addFlashAttribute("msg", "Participant saved successfully!");
             }
 
+            ParticipantTransformerHelper participantTransformerHelper = new ParticipantTransformerHelper(participantService);
+            
             Participant participant = participantTransformerHelper
                     .transformParticipantViewBeanToParticipant(participantViewBean);
             participantService.saveOrUpdateParticipant(participant);
