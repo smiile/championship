@@ -72,7 +72,12 @@
                                 });
                             });
                         } else {
-                            swal("One more thing...", "You need 8 groups with at least 2 participants each.", "warning");
+                            swal({
+                                title: "One more thing...",
+                                text: "You can't have more than 8 groups. <br/>Each group should have at least 2 players.",
+                                type: "warning",
+                                html: true
+                            });
                         }
 
                     }
