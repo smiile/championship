@@ -6,12 +6,15 @@ import bg.proxiad.demo.championship.jsonbeans.GroupReceiver;
 import bg.proxiad.demo.championship.jsonbeans.StatusResponse;
 import bg.proxiad.demo.championship.logic.MatchService;
 import bg.proxiad.demo.championship.model.Grouping;
+import bg.proxiad.demo.championship.model.Match;
+import bg.proxiad.demo.championship.model.Participant;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/ajax")
@@ -121,5 +125,43 @@ public class AjaxController {
         matchService.generateGroupMatches();
         
         return statusResponse;
+    }
+    
+    @RequestMapping(value = "/checkFinalMatchesConditions")
+    public @ResponseBody StatusResponse checkFinalMatchesConditions() {
+        StatusResponse statusResponse = new StatusResponse();
+        statusResponse.setStatus("OK");
+        
+        // All matches should have results
+        for(Match match : matchService.listGroupMatches()) {
+            if(Objects.equals(match.getP1GamesWon(), null) || Objects.equals(match.getP2GamesWon(), null)) {
+                statusResponse.setStatus("FAIL");
+                return statusResponse;
+            }
+        }
+        
+        return statusResponse;
+    }
+    
+    @RequestMapping(value = "/generateFinalMatches")
+    public @ResponseBody StatusResponse generateFinalMatches() {
+        StatusResponse statusResponse = new StatusResponse();
+        statusResponse.setStatus("OK");
+        
+        // Need 8 finalists
+        List<Participant> finalists = new ArrayList<>();
+        
+        
+        for(Grouping group : groupingService.listAllGroupings()) {
+            fillInGroupResults(group);
+        }
+        
+        // Calculate 
+        
+        return statusResponse;
+    }
+    
+    private void fillInGroupResults(Grouping group) {
+        
     }
 }

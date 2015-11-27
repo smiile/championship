@@ -14,6 +14,7 @@
         </div>
         <div class="row" style="margin-bottom: 20px;">
             <span style="font-size: 24px;">Matches</span>
+            <a href="" id="generateFinalsBtn" class="btn btn-success pull-right" style="margin-left: 20px;"><span class="glyphicon glyphicon-flag"></span>Generate finals</a>
         </div>
 
         <c:if test="${not empty msg}">
@@ -64,6 +65,48 @@
                         sorter: false
                     }
                 }
+            });
+            
+            $("#generateFinalsBtn").click(function (event) {
+                event.preventDefault();
+                
+                $.ajax({
+                    url: "${pageContext.request.contextPath}/app/ajax/checkFinalMatchesConditions",
+                    success: function (response) {
+                        if (response.status === "OK") {
+                            swal({
+                                title: "Good job!",
+                                text: "All matches have results. <br/>The finals generation can continue!",
+                                type: "success",
+                                showCancelButton: true,
+                                closeOnConfirm: false,
+                                showLoaderOnConfirm: true,
+                                html: true
+                            }, function () {
+                                $.ajax({
+                                    url: "${pageContext.request.contextPath}/app/ajax/generateFinalMatches",
+                                    success: function (response) {
+                                        if (response.status === "OK") {
+                                            window.location.reload();
+                                        } else {
+                                            swal("Oops!", "Something went wrong. Call the admin!", "error");
+                                        }
+                                    }, error: function () {
+                                        sweetAlert("Oops...", "Something went wrong!", "error");
+                                    }
+                                });
+                            });
+                        } else {
+                            swal({
+                                title: "One more thing...",
+                                text: "All matches should have results",
+                                type: "warning",
+                                html: true
+                            });
+                        }
+
+                    }
+                });
             });
             
         });
