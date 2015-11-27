@@ -3,6 +3,10 @@ package bg.proxiad.demo.championship.front;
 import bg.proxiad.demo.championship.logic.MatchService;
 import bg.proxiad.demo.championship.model.Match;
 import bg.proxiad.demo.championship.viewbeans.MatchViewBean;
+import common.Pair;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RequestMapping("/matches")
@@ -74,5 +79,29 @@ public class MatchController {
             // POST/REDIRECT/GET
             return "redirect:/app/matches";
         }
+    }
+    
+    // Convenience method
+    @RequestMapping(value = "/setRandomResults")
+    public @ResponseBody String setRandomResults() { // Exercise: rewrite this using arrays
+        List<Pair<Long, Long>> pairList = new ArrayList<>();
+        
+        pairList.add(new Pair(0L, 2L));
+        pairList.add(new Pair(1L, 2L));
+        pairList.add(new Pair(2L, 0L));
+        pairList.add(new Pair(2L, 1L));
+        
+        Random rnd = new Random();
+        
+        for(Match match : matchService.listGroupMatches()) {
+            Pair<Long, Long> randomResult = pairList.get(rnd.nextInt(3));
+            
+            match.setP1GamesWon(randomResult.getL());
+            match.setP2GamesWon(randomResult.getR());
+            
+            matchService.saveOrUpdateMatch(match);
+        }
+        
+        return "GREAT SUCCESS";
     }
 }
