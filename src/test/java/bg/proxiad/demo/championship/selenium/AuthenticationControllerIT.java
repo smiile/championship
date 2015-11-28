@@ -42,7 +42,7 @@ public class AuthenticationControllerIT {
         driver.findElement(By.id("inputPassword")).sendKeys("test");
         driver.findElement(By.tagName("button")).submit();
         
-        assertTrue("logged in", driver.findElementsByPartialLinkText("test").size() > 0);
+        assertTrue("logged in", driver.findElementsByPartialLinkText("Secret Agent").size() > 0);
         
         // Logout
         driver.get("http://localhost:8080/championship/app/auth/logout");

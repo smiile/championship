@@ -21,6 +21,13 @@ public class CreateUserIT {
     public static void prepareTestEnvironment() {
         driver = new ChromeDriver();
         
+        driver.get("http://localhost:8080/championship/app/auth/login");
+        
+        // Login
+        driver.findElement(By.id("inputEmail")).sendKeys("test@test.it");
+        driver.findElement(By.id("inputPassword")).sendKeys("test");
+        driver.findElement(By.tagName("button")).submit();
+        
         Random rnd = new Random();
         username = common.Utils.randomString("abcdefghijklmnopqrstuvwxyz", 1 + rnd.nextInt(19));
         email = common.Utils.randomString("abcdefghijklmnopqrstuvwxyz", 1 + rnd.nextInt(19)) + "@"
