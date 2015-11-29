@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -151,9 +152,8 @@ public class AjaxController {
         // Need 8 finalists
         List<Participant> finalists = new ArrayList<>();
         
-        
         for(Grouping group : groupingService.listAllGroupings()) {
-            fillInGroupResults(group);
+            calculateAndSetGroupResults(group);
         }
         
         // Calculate 
@@ -161,7 +161,16 @@ public class AjaxController {
         return statusResponse;
     }
     
-    private void fillInGroupResults(Grouping group) {
+    private void calculateAndSetGroupResults(Grouping group) {
+        List<Match> groupMatches = matchService.listGroupMatches(group);
         
+        HashMap hMap = new HashMap();
+        
+        hMap.put(hMap, group);
+        
+        for(Match match : groupMatches) {
+            
+        }
     }
+    
 }

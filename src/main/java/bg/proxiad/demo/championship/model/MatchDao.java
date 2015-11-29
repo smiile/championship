@@ -14,4 +14,6 @@ public interface MatchDao {
     Match load(Long id);
     
     List<Match> listGroupMatches();
+    
+    List<Match> listGroupMatches(Grouping group);
 }

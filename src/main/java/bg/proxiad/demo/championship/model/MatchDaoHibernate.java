@@ -42,5 +42,11 @@ public class MatchDaoHibernate implements MatchDao {
     public Match load(Long id) {
         return sessionFactory.getCurrentSession().get(Match.class, id);
     }
-    
+
+    @Override
+    public List<Match> listGroupMatches(Grouping group) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from Match where isGroupMatch is true and inGroup = :group")
+                .setParameter("group", group).list();
+    }
 }
