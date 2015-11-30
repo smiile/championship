@@ -25,7 +25,7 @@ public class TestSuite {
     @BeforeClass
     public static void setUpClass() throws Exception {
         // Windows-only
-        System.setProperty("webdriver.chrome.driver", "C:\\tools\\chromedriver.exe");
+//        System.setProperty("webdriver.chrome.driver", "C:\\tools\\chromedriver.exe");
         
     }
     
