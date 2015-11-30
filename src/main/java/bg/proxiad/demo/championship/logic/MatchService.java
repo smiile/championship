@@ -15,6 +15,8 @@ public interface MatchService {
     
     public void deleteAllGroupMatches();
     
+    public void deleteAllFinalMatches();
+    
     public Match loadMatch(Long id);
     
     public List<Match> listGroupMatches();

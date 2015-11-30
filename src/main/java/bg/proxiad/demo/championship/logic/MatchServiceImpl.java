@@ -76,4 +76,9 @@ public class MatchServiceImpl implements MatchService{
     public List<Match> listGroupMatches(Grouping group) {
         return matchDao.listGroupMatches(group);
     }
+
+    @Override
+    public void deleteAllFinalMatches() {
+        matchDao.deleteAllFinalMatches();
+    }
 }

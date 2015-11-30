@@ -11,6 +11,8 @@ public interface MatchDao {
     
     void deleteAllGroupMatches();
     
+    void deleteAllFinalMatches();
+    
     Match load(Long id);
     
     List<Match> listGroupMatches();

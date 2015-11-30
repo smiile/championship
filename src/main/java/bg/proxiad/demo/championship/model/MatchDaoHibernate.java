@@ -49,4 +49,11 @@ public class MatchDaoHibernate implements MatchDao {
                 .createQuery("from Match where isGroupMatch is true and inGroup = :group")
                 .setParameter("group", group).list();
     }
+
+    @Override
+    public void deleteAllFinalMatches() {
+        sessionFactory.getCurrentSession()
+                .createQuery("delete from Match where isGroupMatch is false")
+                .executeUpdate();
+    }
 }
