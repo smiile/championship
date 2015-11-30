@@ -5,6 +5,8 @@ import bg.proxiad.demo.championship.logic.ParticipantService;
 import bg.proxiad.demo.championship.jsonbeans.GroupReceiver;
 import bg.proxiad.demo.championship.jsonbeans.StatusResponse;
 import bg.proxiad.demo.championship.logic.MatchService;
+import bg.proxiad.demo.championship.logic.ParticipantResultService;
+import bg.proxiad.demo.championship.model.ParticipantResult;
 import bg.proxiad.demo.championship.model.Grouping;
 import bg.proxiad.demo.championship.model.Match;
 import bg.proxiad.demo.championship.model.Participant;
@@ -13,10 +15,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Stack;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/ajax")
@@ -35,6 +38,9 @@ public class AjaxController {
 
     @Autowired
     ParticipantService participantService;
+    
+    @Autowired
+    ParticipantResultService participantResultService;
 
     @Autowired
     GroupingService groupingService;
@@ -44,6 +50,9 @@ public class AjaxController {
     
     @Autowired
     ServletContext context;
+    
+    // Must always be (MAX_FINALISTS % 4) == 0
+    private final int MAX_FINALISTS = 8;
 
     @RequestMapping(value = "/rearrangePlayers", method = RequestMethod.POST, produces = "application/json")
     public @ResponseBody
@@ -100,8 +109,8 @@ public class AjaxController {
         
         List<Grouping> groups = new ArrayList(groupingService.listAllGroupings());
         
-        // No more than 8 groups
-        if(groups.size() > 8) {
+        // No more groups than the defined finalists
+        if(groups.size() > MAX_FINALISTS) {
             statusResponse.setStatus("FAIL");
         }
         
@@ -149,28 +158,115 @@ public class AjaxController {
         StatusResponse statusResponse = new StatusResponse();
         statusResponse.setStatus("OK");
         
-        // Need 8 finalists
-        List<Participant> finalists = new ArrayList<>();
         
+        List<Participant> finalists = new ArrayList();
+        
+        List<List<ParticipantResult>> allGroupResults = new ArrayList();
+        
+        // Calculate rankings for group phase
         for(Grouping group : groupingService.listAllGroupings()) {
-            calculateAndSetGroupResults(group);
+            List<ParticipantResult> groupResult = calculateAndSetParticipantResultsPerGroup(group);
+            allGroupResults.add(groupResult);
         }
         
-        // Calculate 
+        /* 
+         *   Draw first player (lists are sorted by poitns) from each group 
+         *   and remove him from the list
+         *   until the needed number of finalists is reached. 
+         *   More than one full loop will be needed
+         *   if groups are less than required finalists.
+         */ 
+        while(finalists.size() < MAX_FINALISTS) {
+            for(int i=0; i < allGroupResults.size(); i++) {
+//                debugResponse.append(allGroupResults.get(i).get(0).getGroup().getName() + ": ");
+//                debugResponse.append(allGroupResults.get(i).get(0).getParticipant().toString());
+//                debugResponse.append(" ("+allGroupResults.get(i).get(0).getPosition()+")");
+//                debugResponse.append("<br/>");
+                finalists.add(allGroupResults.get(i).get(0).getParticipant());
+                allGroupResults.get(i).remove(0);
+
+                if(finalists.size() == MAX_FINALISTS) {
+                    break;
+                }
+            }
+        }
         
+        // Shuffle the finalists "bowl"
+        Collections.shuffle(finalists);
+        
+//        debugResponse.append("<br/>");
+
+        // Delete previously generated final matches
+        matchService.deleteAllFinalMatches();
+        
+        // Create final matches 
+        for(int i = 0; i < MAX_FINALISTS; i = i + 2) {
+            Participant p1 = finalists.get(i);
+            Participant p2 = finalists.get(i+1);
+            
+            Match finalsMatch = new Match();
+            finalsMatch.setIsGroupMatch(false);
+            finalsMatch.setParticipant1(p1);
+            finalsMatch.setParticipant2(p2);
+            matchService.saveOrUpdateMatch(finalsMatch);
+//            debugResponse.append(p1.toString() + " vs " + p2.toString() + "<br/>");
+        }
+//        debugResponse.append("<br/>");
+        
+//        return debugResponse.toString();
         return statusResponse;
     }
     
-    private void calculateAndSetGroupResults(Grouping group) {
+    private List<ParticipantResult> calculateAndSetParticipantResultsPerGroup(Grouping group) {
         List<Match> groupMatches = matchService.listGroupMatches(group);
         
-        HashMap hMap = new HashMap();
+        HashMap<Long, ParticipantResult> hMap = new HashMap<>();
         
-        hMap.put(hMap, group);
-        
+        // Accumulate results
         for(Match match : groupMatches) {
+            ParticipantResult participantResultP1;
+            ParticipantResult participantResultP2;
             
+            if(hMap.containsKey(match.getParticipant1().getId())) {
+                participantResultP1 = hMap.get(match.getParticipant1().getId());
+            } else {
+                participantResultP1 = new ParticipantResult();
+            }
+
+            participantResultP1.setPoints(participantResultP1.getPoints() + match.getP1GamesWon().intValue());
+            participantResultP1.setGroup(group);
+            participantResultP1.setParticipant(match.getParticipant1());
+            hMap.put(match.getParticipant1().getId(), participantResultP1);
+
+            if(hMap.containsKey(match.getParticipant2().getId())) {
+                participantResultP2 = hMap.get(match.getParticipant2().getId());
+            } else {
+                participantResultP2 = new ParticipantResult();
+            }
+
+            participantResultP2.setPoints(participantResultP2.getPoints() + match.getP2GamesWon().intValue());
+            participantResultP2.setGroup(group);
+            participantResultP2.setParticipant(match.getParticipant2());
+            hMap.put(match.getParticipant2().getId(), participantResultP2);
         }
+        
+        List<ParticipantResult> participantResults = new ArrayList(hMap.values());
+        
+        // Sort results
+        Collections.sort(participantResults);
+        
+        // Delete previous participant results
+        participantResultService.deleteAllParticipantResultByGroup(group);
+        
+        // Set positions and save entities
+        for(int i = 0; i < participantResults.size(); i++) {
+            ParticipantResult tmp = participantResults.get(i);
+            tmp.setPosition(i+1);
+            
+            participantResultService.saveOrUpdateParticipantResult(tmp);
+        }
+        
+        return participantResults;
     }
     
 }
