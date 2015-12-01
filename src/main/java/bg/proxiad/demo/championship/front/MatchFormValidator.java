@@ -33,6 +33,11 @@ public class MatchFormValidator implements Validator {
             errors.rejectValue("p2GamesWon", "Invalid.matchForm.p2GamesWon");
         }
         
+        if(!Objects.equals(p1GamesWon, null) && !Objects.equals(p2GamesWon, null)
+                && ((p1GamesWon + p2GamesWon < 2) || (p1GamesWon + p2GamesWon > 3) || (p1GamesWon != 2 && p2GamesWon != 2))) {
+            errors.rejectValue("p1GamesWon", "Invalid.matchForm.gamesPlayed");
+            errors.rejectValue("p2GamesWon", "Invalid.matchForm.gamesPlayed");
+        }
     }
 
 }
