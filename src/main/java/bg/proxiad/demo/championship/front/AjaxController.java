@@ -139,8 +139,8 @@ public class AjaxController {
         return statusResponse;
     }
     
-    @RequestMapping(value = "/checkFinalMatchesConditions")
-    public @ResponseBody StatusResponse checkFinalMatchesConditions() {
+    @RequestMapping(value = "/checkQuarterFinalMatchesConditions")
+    public @ResponseBody StatusResponse checkQuarterFinalMatchesConditions() {
         StatusResponse statusResponse = new StatusResponse();
         statusResponse.setStatus("OK");
         
@@ -155,8 +155,8 @@ public class AjaxController {
         return statusResponse;
     }
     
-    @RequestMapping(value = "/generateFinalMatches")
-    public @ResponseBody StatusResponse generateFinalMatches() {
+    @RequestMapping(value = "/generateQuarterFinalMatches")
+    public @ResponseBody StatusResponse generateQuarterFinalMatches() {
         StatusResponse statusResponse = new StatusResponse();
         statusResponse.setStatus("OK");
         

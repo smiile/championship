@@ -14,7 +14,7 @@
         </div>
         <div class="row" style="margin-bottom: 20px;">
             <span style="font-size: 24px;">Matches</span>
-            <a href="" id="generateFinalsBtn" class="btn btn-success pull-right" style="margin-left: 20px;"><span class="glyphicon glyphicon-flag"></span>Generate finals</a>
+            <a href="" id="generateFinalsBtn" class="btn btn-success pull-right" style="margin-left: 20px;"><span class="glyphicon glyphicon-flag"></span>Generate quarter-finals</a>
         </div>
 
         <c:if test="${not empty msg}">
@@ -71,12 +71,12 @@
                 event.preventDefault();
                 
                 $.ajax({
-                    url: "${pageContext.request.contextPath}/app/ajax/checkFinalMatchesConditions",
+                    url: "${pageContext.request.contextPath}/app/ajax/checkQuarterFinalMatchesConditions",
                     success: function (response) {
                         if (response.status === "OK") {
                             swal({
                                 title: "Good job!",
-                                text: "All matches have results. <br/>The finals generation can continue!",
+                                text: "All group matches have results. <br/>The quarter-finals generation can continue!",
                                 type: "success",
                                 showCancelButton: true,
                                 closeOnConfirm: false,
@@ -84,7 +84,7 @@
                                 html: true
                             }, function () {
                                 $.ajax({
-                                    url: "${pageContext.request.contextPath}/app/ajax/generateFinalMatches",
+                                    url: "${pageContext.request.contextPath}/app/ajax/generateQuarterFinalMatches",
                                     success: function (response) {
                                         if (response.status === "OK") {
                                             window.location.reload();
@@ -99,7 +99,7 @@
                         } else {
                             swal({
                                 title: "One more thing...",
-                                text: "All matches should have results",
+                                text: "All group matches should have results",
                                 type: "warning",
                                 html: true
                             });

@@ -50,7 +50,8 @@
                     url: "${pageContext.request.contextPath}/app/ajax/checkGroupMatchesConditions",
                     success: function (response) {
                         if (response.status === "OK") {
-                            swal({title: "Good job!",
+                            swal({
+                                title: "Good job!",
                                 text: "All conditions are satisfied. <br/>The match generation can continue.<br/> <b>WARNING<b>: All previous matches will be <i>deleted</i>!",
                                 type: "success",
                                 showCancelButton: true,
@@ -62,7 +63,7 @@
                                     url: "${pageContext.request.contextPath}/app/ajax/generateGroupMatches",
                                     success: function (response) {
                                         if (response.status === "OK") {
-                                            swal("Hooray!", "Matches are generated. Go check them out.", "success");
+                                            window.location.href="${pageContext.request.contextPath}/app/matches"
                                         } else {
                                             swal("Oops!", "Something went wrong. Call the admin!", "error");
                                         }
@@ -98,9 +99,9 @@
                     confirmButtonText: "Yes, delete it!",
                     closeOnConfirm: false
                 },
-                        function () {
-                            window.location.href = deletionUrl;
-                        });
+                function () {
+                    window.location.href = deletionUrl;
+                });
             });
         });
     </script>
