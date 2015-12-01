@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-import java.util.Stack;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,6 +131,9 @@ public class AjaxController {
         // Remove previously generated group matches
         matchService.deleteAllGroupMatches();
         
+        // Remove previously generated finals (this can be a tournament reset)
+        matchService.deleteAllFinalMatches();
+        
         matchService.generateGroupMatches();
         
         return statusResponse;
@@ -178,10 +180,7 @@ public class AjaxController {
          */ 
         while(finalists.size() < MAX_FINALISTS) {
             for(int i=0; i < allGroupResults.size(); i++) {
-//                debugResponse.append(allGroupResults.get(i).get(0).getGroup().getName() + ": ");
-//                debugResponse.append(allGroupResults.get(i).get(0).getParticipant().toString());
-//                debugResponse.append(" ("+allGroupResults.get(i).get(0).getPosition()+")");
-//                debugResponse.append("<br/>");
+
                 finalists.add(allGroupResults.get(i).get(0).getParticipant());
                 allGroupResults.get(i).remove(0);
 
@@ -194,8 +193,6 @@ public class AjaxController {
         // Shuffle the finalists "bowl"
         Collections.shuffle(finalists);
         
-//        debugResponse.append("<br/>");
-
         // Delete previously generated final matches
         matchService.deleteAllFinalMatches();
         
@@ -209,11 +206,8 @@ public class AjaxController {
             finalsMatch.setParticipant1(p1);
             finalsMatch.setParticipant2(p2);
             matchService.saveOrUpdateMatch(finalsMatch);
-//            debugResponse.append(p1.toString() + " vs " + p2.toString() + "<br/>");
         }
-//        debugResponse.append("<br/>");
         
-//        return debugResponse.toString();
         return statusResponse;
     }
     
