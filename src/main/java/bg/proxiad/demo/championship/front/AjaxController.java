@@ -35,17 +35,19 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/ajax")
 public class AjaxController {
 
-    @Autowired
-    ParticipantService participantService;
+    private final MatchService matchService;
+    private final ParticipantResultService participantResultService;
+    private final GroupingService groupingService;
     
     @Autowired
-    ParticipantResultService participantResultService;
-
+    public AjaxController(MatchService matchService, ParticipantResultService participantResultService, GroupingService groupingService) {
+        this.matchService = matchService;
+        this.participantResultService = participantResultService;
+        this.groupingService = groupingService;
+    }
+    
     @Autowired
-    GroupingService groupingService;
-
-    @Autowired
-    MatchService matchService;
+    ParticipantService participantService;
     
     @Autowired
     ServletContext context;
@@ -160,7 +162,7 @@ public class AjaxController {
         StatusResponse statusResponse = new StatusResponse();
         statusResponse.setStatus("OK");
         
-        
+
         List<Participant> finalists = new ArrayList();
         
         List<List<ParticipantResult>> allGroupResults = new ArrayList();
