@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class ParticipantResult implements Serializable, Comparable<ParticipantResult> {
@@ -14,10 +14,10 @@ public class ParticipantResult implements Serializable, Comparable<ParticipantRe
     @GeneratedValue
     Long id;
     
-    @OneToOne
+    @ManyToOne
     Grouping group;
     
-    @OneToOne
+    @ManyToOne
     Participant participant;
     
     Integer position;

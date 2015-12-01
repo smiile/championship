@@ -1,11 +1,14 @@
 package bg.proxiad.demo.championship.model;
 
 import java.io.Serializable;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -31,6 +34,15 @@ public class Participant implements Serializable {
     
     @ManyToOne
     private Grouping grouping;
+    
+    @OneToMany(mappedBy = "participant", cascade = CascadeType.REMOVE)
+    private List<ParticipantResult> participantResults;
+    
+    @OneToMany(mappedBy = "participant1", cascade = CascadeType.REMOVE)
+    private List<Match> matchesHost;
+    
+    @OneToMany(mappedBy = "participant2", cascade = CascadeType.REMOVE)
+    private List<Match> matchesGuest;
 
     public Grouping getGrouping() {
         return grouping;

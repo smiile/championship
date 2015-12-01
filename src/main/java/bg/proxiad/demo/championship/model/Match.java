@@ -18,10 +18,11 @@ public class Match implements Serializable {
     @GeneratedValue
     private Long id;
     
-    @OneToOne
-    private Participant participant1;
     
-    @OneToOne
+    @ManyToOne
+    private Participant participant1;
+
+    @ManyToOne
     private Participant participant2;
     
     @ManyToOne

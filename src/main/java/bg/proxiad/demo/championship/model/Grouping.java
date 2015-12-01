@@ -14,6 +14,9 @@ import javax.persistence.Table;
 @Table(name = "GROUP_TABLE")
 public class Grouping implements Serializable {
 
+    @OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
+    private List<ParticipantResult> participantResults;
+
     @OneToMany(mappedBy = "inGroup", cascade = CascadeType.REMOVE)
     private List<Match> matches;
     
