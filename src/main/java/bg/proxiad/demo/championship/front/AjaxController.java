@@ -145,6 +145,11 @@ public class AjaxController {
         StatusResponse statusResponse = new StatusResponse();
         statusResponse.setStatus("OK");
         
+        if(matchService.listGroupMatches().size() == 0) {
+            statusResponse.setStatus("FAIL");
+            return statusResponse;
+        }
+        
         // All matches should have results
         for(Match match : matchService.listGroupMatches()) {
             if(Objects.equals(match.getP1GamesWon(), null) || Objects.equals(match.getP2GamesWon(), null)) {

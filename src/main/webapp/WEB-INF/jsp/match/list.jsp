@@ -99,7 +99,7 @@
                         } else {
                             swal({
                                 title: "One more thing...",
-                                text: "All group matches should have results",
+                                text: "Group matches with results are a prerequisite for this operation",
                                 type: "warning",
                                 html: true
                             });
