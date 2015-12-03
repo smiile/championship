@@ -16,7 +16,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -162,107 +161,69 @@ public class AjaxController {
         StatusResponse statusResponse = new StatusResponse();
         statusResponse.setStatus("OK");
         
-
-        List<Participant> finalists = new ArrayList();
-        
+        List<Participant> quarterFinalists = new ArrayList();
         List<List<ParticipantResult>> allGroupResults = new ArrayList();
         
         // Calculate rankings for group phase
-        for(Grouping group : groupingService.listAllGroupings()) {
-            List<ParticipantResult> groupResult = calculateAndSetParticipantResultsPerGroup(group);
-            allGroupResults.add(groupResult);
+        try {
+            if(groupingService.listAllGroupings().isEmpty()) {
+                throw new Exception("Fatal error!! No groups exist.");
+            }
+            
+            for(Grouping group : groupingService.listAllGroupings()) {
+                
+                if(Objects.equals(group.getParticipants(), null) || group.getParticipants().isEmpty()) {
+                    throw new Exception("Fatal error!! One of the groups(" + group.getName() + ") " + "has zero participants.");
+                }
+                
+                List<ParticipantResult> groupResult = participantResultService.calculateAndSetParticipantResultsPerGroup(group);
+                allGroupResults.add(groupResult);
+            }
+        } catch (Exception e) {
+            statusResponse.setStatus("FAIL");
+            statusResponse.setData(e.getMessage());
+            
+            return statusResponse;
         }
         
         /* 
-         *   Draw first player (lists are sorted by poitns) from each group 
+         *   Draw first player (lists are sorted by points) from each group 
          *   and remove him from the list
          *   until the needed number of finalists is reached. 
          *   More than one full loop will be needed
          *   if groups are less than required finalists.
          */ 
-        while(finalists.size() < MAX_FINALISTS) {
+        while(quarterFinalists.size() < MAX_FINALISTS) {
             for(int i=0; i < allGroupResults.size(); i++) {
-
-                finalists.add(allGroupResults.get(i).get(0).getParticipant());
+                
+                quarterFinalists.add(allGroupResults.get(i).get(0).getParticipant());
                 allGroupResults.get(i).remove(0);
-
-                if(finalists.size() == MAX_FINALISTS) {
+                
+                if(quarterFinalists.size() == MAX_FINALISTS) {
                     break;
                 }
             }
         }
         
-        // Shuffle the finalists "bowl"
-        Collections.shuffle(finalists);
+        // Shuffle the quarter-finalists "bowl"
+        Collections.shuffle(quarterFinalists);
         
-        // Delete previously generated final matches
+        // Delete previously generated quarter-final matches
         matchService.deleteAllFinalMatches();
         
         // Create final matches 
         for(int i = 0; i < MAX_FINALISTS; i = i + 2) {
-            Participant p1 = finalists.get(i);
-            Participant p2 = finalists.get(i+1);
+            Participant p1 = quarterFinalists.get(i);
+            Participant p2 = quarterFinalists.get(i+1);
             
-            Match finalsMatch = new Match();
-            finalsMatch.setIsGroupMatch(false);
-            finalsMatch.setParticipant1(p1);
-            finalsMatch.setParticipant2(p2);
-            matchService.saveOrUpdateMatch(finalsMatch);
+            Match quarterFinalMatch = new Match();
+            quarterFinalMatch.setIsGroupMatch(false);
+            quarterFinalMatch.setParticipant1(p1);
+            quarterFinalMatch.setParticipant2(p2);
+            matchService.saveOrUpdateMatch(quarterFinalMatch);
         }
         
         return statusResponse;
-    }
-    
-    private List<ParticipantResult> calculateAndSetParticipantResultsPerGroup(Grouping group) {
-        List<Match> groupMatches = matchService.listGroupMatches(group);
-        
-        HashMap<Long, ParticipantResult> hMap = new HashMap<>();
-        
-        // Accumulate results
-        for(Match match : groupMatches) {
-            ParticipantResult participantResultP1;
-            ParticipantResult participantResultP2;
-            
-            if(hMap.containsKey(match.getParticipant1().getId())) {
-                participantResultP1 = hMap.get(match.getParticipant1().getId());
-            } else {
-                participantResultP1 = new ParticipantResult();
-            }
-
-            participantResultP1.setPoints(participantResultP1.getPoints() + match.getP1GamesWon().intValue());
-            participantResultP1.setGroup(group);
-            participantResultP1.setParticipant(match.getParticipant1());
-            hMap.put(match.getParticipant1().getId(), participantResultP1);
-
-            if(hMap.containsKey(match.getParticipant2().getId())) {
-                participantResultP2 = hMap.get(match.getParticipant2().getId());
-            } else {
-                participantResultP2 = new ParticipantResult();
-            }
-
-            participantResultP2.setPoints(participantResultP2.getPoints() + match.getP2GamesWon().intValue());
-            participantResultP2.setGroup(group);
-            participantResultP2.setParticipant(match.getParticipant2());
-            hMap.put(match.getParticipant2().getId(), participantResultP2);
-        }
-        
-        List<ParticipantResult> participantResults = new ArrayList(hMap.values());
-        
-        // Sort results
-        Collections.sort(participantResults);
-        
-        // Delete previous participant results
-        participantResultService.deleteAllParticipantResultByGroup(group);
-        
-        // Set positions and save entities
-        for(int i = 0; i < participantResults.size(); i++) {
-            ParticipantResult tmp = participantResults.get(i);
-            tmp.setPosition(i+1);
-            
-            participantResultService.saveOrUpdateParticipantResult(tmp);
-        }
-        
-        return participantResults;
     }
     
 }

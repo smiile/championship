@@ -89,7 +89,7 @@
                                         if (response.status === "OK") {
                                             window.location.reload();
                                         } else {
-                                            swal("Oops!", "Something went wrong. Call the admin!", "error");
+                                            swal("Oops!", response.data, "error");
                                         }
                                     }, error: function () {
                                         sweetAlert("Oops...", "Something went wrong!", "error");
