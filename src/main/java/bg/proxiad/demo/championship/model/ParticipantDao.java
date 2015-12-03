@@ -14,4 +14,6 @@ public interface ParticipantDao {
         Collection<Participant> listAllByIds(List<Long> participants);
 
         void delete(Participant participant);
+        
+        public Collection<Participant> listAllUnassignedParticipants();
 }

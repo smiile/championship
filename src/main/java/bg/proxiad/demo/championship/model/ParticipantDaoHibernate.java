@@ -50,5 +50,10 @@ public class ParticipantDaoHibernate implements ParticipantDao {
         sessionFactory.getCurrentSession().delete(Participant.class.getName(), participant);
     }
 
+    @Override
+    public Collection<Participant> listAllUnassignedParticipants() {
+        return sessionFactory.getCurrentSession().createQuery("from Participant where grouping is null").list();
+    }
+
     
 }

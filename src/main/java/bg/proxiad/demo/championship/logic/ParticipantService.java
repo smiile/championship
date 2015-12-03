@@ -16,4 +16,6 @@ public interface ParticipantService {
         void deleteParticipant(Participant participant);
         
         public Collection<Participant> listAllByIds(List<Long> participantIds);
+        
+        public Collection<Participant> listAllUnassignedParticipants();
 }

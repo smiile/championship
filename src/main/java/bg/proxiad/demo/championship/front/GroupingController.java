@@ -142,14 +142,7 @@ public class GroupingController {
     @RequestMapping(path = "/rearrange", method = RequestMethod.GET)
     public String rearrangeGroup(ModelMap model) {
         List<Grouping> groups = new ArrayList(groupingService.listAllGroupings());
-
-        List<Participant> unassignedParticipants = new ArrayList();
-
-        for (Participant participant : participantService.listAllParticipants()) {
-            if (Objects.equals(participant.getGrouping(), null)) {
-                unassignedParticipants.add(participant);
-            }
-        }
+        List<Participant> unassignedParticipants = new ArrayList(participantService.listAllUnassignedParticipants());
 
         model.addAttribute("participants", unassignedParticipants);
         model.addAttribute("groups", groups);

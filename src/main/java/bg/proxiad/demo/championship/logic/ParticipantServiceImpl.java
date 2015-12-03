@@ -42,4 +42,11 @@ public class ParticipantServiceImpl implements ParticipantService {
         return participantDao.listAllByIds(participantIds);
     }
 
+    @Override
+    public Collection<Participant> listAllUnassignedParticipants() {
+        return participantDao.listAllUnassignedParticipants();
+    }
+    
+    
+
 }
