@@ -201,6 +201,16 @@ public class AjaxController {
         while(quarterFinalists.size() < MAX_FINALISTS) {
             for(int i=0; i < allGroupResults.size(); i++) {
                 
+                /* 
+                   When players are not evenly distributed among groups
+                   indexOutOfBounds may be thrown
+                   NOTE that this may complicate the problem further
+                   and cause an infinite loop
+                */
+                if(allGroupResults.get(i).size() == 0) {
+                    continue;
+                }
+                
                 quarterFinalists.add(allGroupResults.get(i).get(0).getParticipant());
                 allGroupResults.get(i).remove(0);
                 
